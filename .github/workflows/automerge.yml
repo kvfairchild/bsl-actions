@@ -12,17 +12,6 @@ on:
     types:
       - completed
 
-  workflow_dispatch:
-    inputs:
-      pull-request:
-        description: Pull Request Number
-        required: false
-
-permissions:
-  checks: read
-  contents: write
-  actions: write
-
 jobs:
   checkchanges:
     name: Check if PR only changes /benchmarks and/or /models
