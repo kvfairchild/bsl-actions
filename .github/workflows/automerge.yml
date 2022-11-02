@@ -46,11 +46,11 @@ jobs:
       - name: Auto Approve
         uses: hmarr/auto-approve-action@v3.1.0
 
-      # - name: Add automerge label
-      #   uses: actions-ecosystem/action-add-labels@v1
-      #   with:
-      #     labels:
-      #       automerge
+      - name: Add automerge label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels:
+            automerge
 
       - name: Auto Merge
         uses: plm9606/automerge_actions@1.2.2
