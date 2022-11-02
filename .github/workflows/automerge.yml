@@ -57,9 +57,6 @@ jobs:
       #       automerge
 
       - name: Auto Merge
-        uses: reitermarkus/automerge@v2
+        uses: ridedott/merge-me-action@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          merge-method: squash
-          # required-labels: automerge
-          # pull-request: ${{ github.event.inputs.pull-request }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
