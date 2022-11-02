@@ -12,11 +12,7 @@ on:
     types:
       - completed
 
-permissions:
-  checks: read
-  contents: write
-  actions: write
-  pull-requests: write
+permissions: read-all|write-all
 
 jobs:
   checkchanges:
@@ -59,4 +55,4 @@ jobs:
       - name: Auto Merge
         uses: ridedott/merge-me-action@v2
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
