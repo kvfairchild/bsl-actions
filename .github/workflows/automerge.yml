@@ -46,18 +46,16 @@ jobs:
       - name: Auto Approve
         uses: hmarr/auto-approve-action@v3.1.0
 
-      - name: Add automerge label
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels:
-            automerge
+      # - name: Add automerge label
+      #   uses: actions-ecosystem/action-add-labels@v1
+      #   with:
+      #     labels:
+      #       automerge
 
       - name: Auto Merge
-        uses: squalrus/merge-bot@v0.1.0
+        uses: reitermarkus/automerge@v2
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          reviewers: false
-          labels: automerge
-          checks_enabled: true
-          method: squash
-          delete_source_branch: true
+          token: ${{ secrets.AUTOMERGE_TOKEN }}
+          merge-method: squash
+          # required-labels: automerge
+          # pull-request: ${{ github.event.inputs.pull-request }}
