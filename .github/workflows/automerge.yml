@@ -53,6 +53,6 @@ jobs:
       #       automerge
 
       - name: Auto Merge
-        uses: ridedott/merge-me-action@v2
+        uses: plm9606/automerge_actions@1.2.2
         with:
-          GITHUB_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
