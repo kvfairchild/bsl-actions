@@ -1,0 +1,74 @@
+name: Merge plugin-only PRs
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - ready_for_review
+      - synchronize
+  check_suite:
+    types:
+      - completed
+
+  workflow_dispatch:
+    inputs:
+      pull-request:
+        description: Pull Request Number
+        required: false
+
+permissions:
+  checks: read
+  contents: write
+  actions: write
+
+jobs:
+  checkchanges:
+    name: Check if PR only changes /benchmarks and/or /models
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Get changed files
+        uses: dorny/paths-filter@v2.11.1
+        id: filter
+        with:
+          list-files: shell
+          filters: |
+            changed:
+              - '**'
+      - name: Save changed files to env var
+        run: echo "CHANGED_FILES=${{ steps.filter.outputs.changed_files }}" >> $GITHUB_ENV
+      
+      - name: Parse changed files with python script
+        run: |
+          echo "IS_PLUGIN_ONLY=$(python parse_changed_files.py ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+     
+  automerge:
+    name: If only plugin files are changed, automatically approve and merge
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    needs: checkchanges
+    # if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
+    steps:
+      - name: Auto Approve
+        uses: hmarr/auto-approve-action@v3.1.0
+
+      - name: Add automerge label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels:
+            automerge
+
+      - name: Auto Merge
+        uses: squalrus/merge-bot@v0.1.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          reviewers: false
+          labels: automerge
+          checks_enabled: true
+          method: squash
+          delete_source_branch: true
