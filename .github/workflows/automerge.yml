@@ -57,11 +57,6 @@ jobs:
             automerge
 
       - name: Auto Merge
-        uses: squalrus/merge-bot@v0.1.0
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          reviewers: false
-          labels: automerge
-          checks_enabled: true
-          method: squash
-          delete_source_branch: true
+        uses: "pascalgn/automerge-action@v0.15.5"
+        env:
+          GITHUB_TOKEN: "${{ secrets.AUTOMERGE_TOKEN }}"
