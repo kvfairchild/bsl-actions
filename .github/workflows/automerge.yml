@@ -1,7 +1,7 @@
 name: Merge plugin-only PRs
 
 on:
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - edited
@@ -11,6 +11,12 @@ on:
   check_suite:
     types:
       - completed
+
+permissions:
+  checks: read
+  contents: write
+  actions: write
+  pull-requests: write
 
 jobs:
   checkchanges:
@@ -38,8 +44,6 @@ jobs:
   automerge:
     name: If only plugin files are changed, automatically approve and merge
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     needs: checkchanges
     # if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
     steps:
