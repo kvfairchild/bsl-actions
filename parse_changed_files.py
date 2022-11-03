@@ -80,7 +80,5 @@ def create_plugins_dict():
 
 if __name__ == '__main__':
 
-	print("you've reached main")
-
 	function = getattr(sys.modules[__name__], sys.argv[1])
 	function()
