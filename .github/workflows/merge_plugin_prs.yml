@@ -52,8 +52,10 @@ jobs:
     needs: checkchanges
     if: needs.checkchanges.outputs.IS_PLUGIN_ONLY
     steps:
-      - name: Auto Approve
-        uses: hmarr/auto-approve-action@v3.1.0
+      - name: Why won't you merrrggee
+      run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
+      # - name: Auto Approve
+      #   uses: hmarr/auto-approve-action@v3.1.0
 
       # - name: Add automerge label
       #   uses: actions-ecosystem/action-add-labels@v1
@@ -61,7 +63,7 @@ jobs:
       #     labels:
       #       automerge
 
-      - name: Auto Merge
-        uses: plm9606/automerge_actions@1.2.2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Auto Merge
+      #   uses: plm9606/automerge_actions@1.2.2
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
