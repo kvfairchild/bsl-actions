@@ -16,8 +16,8 @@ on:
       - reopened
       - ready_for_review
       - synchronize
-  check_suite:
-    conclusion: success
+  # check_suite:
+  #   conclusion: success
 
 permissions: write-all
 
