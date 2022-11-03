@@ -7,8 +7,11 @@ on:
 
 jobs:
   checkchanges:
-    name: Get plugins to score
+    name: Check if PR only changes /benchmarks and/or /models
     runs-on: ubuntu-latest
+    outputs:
+      output: ${{ steps.scriptout.outputs.is_plugin_only }}
+    if: contains( github.event.pull_request.labels.*.name, 'automerge')
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -26,9 +29,10 @@ jobs:
         run: echo "CHANGED_FILES=${{ steps.filter.outputs.changed_files }}" >> $GITHUB_ENV
       
       - name: Parse changed files with python script
+        id: scriptout
         run: |
-          echo "PLUGINS=$(python .github/workflows/parse_changed_files.py create_plugins_dict ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
-
+          echo "is_plugin_only=$(python .github/workflows/parse_changed_files.py create_plugins_dict ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+  
   posttojenkins:
     name: POST job request to Jenkins
     runs-on: ubuntu-latest
