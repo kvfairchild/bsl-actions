@@ -72,7 +72,7 @@ def plugins_to_score(plugins_dict, plugin_files_changed) -> str:
 			plugins_dict[plugin_type] = ' '.join(plugins_to_score)
 
 	plugins_dict = str(plugins_dict).replace('\'', '\"')
-	plugins_dict = f'\'{plugins_dict}\''
+	# plugins_dict = f'\'{plugins_dict}\''
 	
 	return plugins_dict
 
