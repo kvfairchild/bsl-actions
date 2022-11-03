@@ -35,7 +35,7 @@ jobs:
       
       - name: Parse changed files with python script
         run: |
-          echo "IS_PLUGIN_ONLY=$(python parse_changed_files.py ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+          echo "IS_PLUGIN_ONLY=$(python parse_changed_files.py is_plugin_only ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
      
   automerge:
     name: If only plugin files are changed, automatically approve and merge
