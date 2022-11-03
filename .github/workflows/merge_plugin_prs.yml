@@ -27,6 +27,8 @@ jobs:
     name: Check if PR only changes /benchmarks and/or /models
     runs-on: ubuntu-latest
     if: contains( github.event.pull_request.labels.*.name, 'automerge')
+    outputs:
+      output: ${{ steps.getpluginfo.outputs.PLUGIN_INFO }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -43,6 +45,7 @@ jobs:
         run: echo "CHANGED_FILES=${{ steps.filter.outputs.changed_files }}" >> $GITHUB_ENV
       
       - name: Parse changed files with python script
+        id: getpluginfo
         run: |
           echo "PLUGIN_INFO=$(python .github/workflows/parse_changed_files.py ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
      
