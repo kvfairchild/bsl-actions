@@ -23,7 +23,7 @@ def get_changed_files(changed_files: List[str]) -> List[str]:
 	return plugin_files_changed, non_plugin_files_changed
 
 
-def is_plugin_only(non_plugin_files_changed: List[str], plugins_dict: Dict[str:str]) -> Dict[str:str]:
+def is_plugin_only(non_plugin_files_changed: List[str], plugins_dict: Dict[str, str]) -> Dict[str, str]:
 
 	if len(non_plugin_files_changed) > 0:
 		plugins_dict["is_plugin_only"] = "false"
@@ -56,7 +56,7 @@ def _get_registered_plugins(plugin_type: str, plugin_dirs: List[str]) -> List[st
 	return registered_plugins
 
 
-def create_plugins_dict(plugin_files_changed: List[str], plugins_dict: Dict[str:str]):
+def create_plugins_dict(plugin_files_changed: List[str], plugins_dict: Dict[str, str]) -> Dict[str, str]:
 
 	scoring_plugins = ("models", "benchmarks")
 	scoring_plugin_paths = tuple([f'brainscore_language/{plugin_type}/' for plugin_type in scoring_plugins])
