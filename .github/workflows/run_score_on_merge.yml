@@ -47,7 +47,7 @@ jobs:
     - name: Set job params from env variables
           echo "JOB_PARAMS=${{ env.MODELS_AND_BENCHMARKS }}" >> $GITHUB_ENV
     - name: build urls
-      if: env.run_score == 'true'
+      if: env.RUN_SCORE == 'true'
       run: |
         echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
         echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
