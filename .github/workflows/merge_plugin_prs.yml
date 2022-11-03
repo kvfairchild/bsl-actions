@@ -26,6 +26,8 @@ jobs:
   checkchanges:
     name: Check if PR only changes /benchmarks and/or /models
     runs-on: ubuntu-latest
+    outputs:
+      output: ${{ steps.scriptout.outputs.is_plugin_only }}
     if: contains( github.event.pull_request.labels.*.name, 'automerge')
     steps:
       - name: Check out repository code
@@ -39,12 +41,14 @@ jobs:
           filters: |
             changed:
               - '**'
+
       - name: Save changed files to env var
         run: echo "CHANGED_FILES=${{ steps.filter.outputs.changed_files }}" >> $GITHUB_ENV
       
       - name: Parse changed files with python script
+        id: scriptout
         run: |
-          echo "IS_PLUGIN_ONLY=$(python .github/workflows/parse_changed_files.py is_plugin_only ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+          echo "is_plugin_only=$(python .github/workflows/parse_changed_files.py is_plugin_only ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
      
   automerge:
     name: If plugin-only, approve and merge
@@ -53,7 +57,7 @@ jobs:
     if: true
     steps:
       - name: Why won't you merrrggee
-        run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
+        run: echo "${{ needs.checkchanges.outputs.output }}"
       # - name: Auto Approve
       #   uses: hmarr/auto-approve-action@v3.1.0
 
