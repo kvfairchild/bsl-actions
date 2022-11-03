@@ -54,7 +54,7 @@ jobs:
     name: If plugin-only, approve and merge
     runs-on: ubuntu-latest
     needs: checkchanges
-    if: ${{ needs.checkchanges.outputs.output }}
+    if: ${{ needs.checkchanges.outputs.output }} == 'true'
     steps:
       - name: Why won't you merrrggee
         run: echo "${{ needs.checkchanges.outputs.output }}"
