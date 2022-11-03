@@ -24,4 +24,4 @@ class TestBenchmark:
         score = benchmark(dummy_model)
         assert score == approx(0.05945, abs=0.001)
 
-"test"
+
