@@ -27,6 +27,7 @@ jobs:
   checkchanges:
     name: Check if PR only changes /benchmarks and/or /models
     runs-on: ubuntu-latest
+    if: contains( github.event.pull_request.labels.*.name, 'automerge')
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
