@@ -83,6 +83,7 @@ jobs:
       PLUGIN_INFO: ${{ needs.checkchanges.outputs.PLUGIN_INFO }}
       JENKINS_URL: "braintree.mit.edu:8080"
       USER: "kvg0"
+      JENKINS_USR_TOKEN: ${{ secrets.JENKINS_USR_TOKEN }}
       JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
       JOB_PATH: "dev_run_benchmarks"
     steps:
@@ -97,8 +98,8 @@ jobs:
       - name: Build URLs
         if: env.RUN_SCORE == 'true'
         run: |
-          echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
+          echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_USR_TOKEN }}" >> $GITHUB_ENV
           echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
       - name: POST job
         if: env.RUN_SCORE == 'true'
-        run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
+        run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_USR_TOKEN }} ${{ env.URL }}
