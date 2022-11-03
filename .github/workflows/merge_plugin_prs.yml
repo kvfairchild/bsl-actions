@@ -50,7 +50,7 @@ jobs:
     name: If plugin-only, approve and merge
     runs-on: ubuntu-latest
     needs: checkchanges
-    # if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
+    if: needs.checkchanges.outputs.IS_PLUGIN_ONLY
     steps:
       - name: Check conditional
         run: echo "needs.checkchanges.outputs.IS_PLUGIN_ONLY"
