@@ -62,7 +62,7 @@ jobs:
       - name: Auto Merge
         uses: plm9606/automerge_actions@1.2.2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.AUTOMERGE_TOKEN }}
 
       # - name: Add automerge label
       #   uses: actions-ecosystem/action-add-labels@v1
