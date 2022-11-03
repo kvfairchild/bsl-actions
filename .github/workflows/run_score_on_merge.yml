@@ -9,7 +9,6 @@ jobs:
   checkchanges:
     name: Get plugins to score
     runs-on: ubuntu-latest
-    if: contains( github.event.pull_request.labels.*.name, 'automerge')
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -45,8 +44,9 @@ jobs:
       run: |
           echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGINS")" >> $GITHUB_ENV
           echo "MODELS_AND_BENCHMARKS=$(jq -r '.models_and_benchmarks' <<< "$PLUGINS")" >> $GITHUB_ENV
-          echo "JOB_PARAMS={${{ env.models_and_benchmarks}}""
+          echo "JOB_PARAMS={${{ env.models_and_benchmarks }}"" >> $GITHUB_ENV
     - name: build urls
+      if: env.run_score == 'true'
       run: |
         echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
         echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
