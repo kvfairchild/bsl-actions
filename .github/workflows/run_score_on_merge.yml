@@ -1,20 +1,13 @@
-name: Merge plugin-only PRs
+name: Score plugins on merge
 
 on:
-  pull_request:
-    types:
-      - opened
-      - edited
-      - reopened
-      - ready_for_review
-      - synchronize
   push:
     branch:
       - main
-  workflow_run:
-    workflows: [merge_plugin_prs]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: [merge_plugin_prs]
+  #   types:
+  #     - completed
 
 permissions: write-all
 
