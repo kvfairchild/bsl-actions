@@ -49,19 +49,19 @@ jobs:
         run: |
           echo "PLUGIN_INFO=$(python .github/workflows/parse_changed_files.py '${{ env.CHANGED_FILES }}')" >> $GITHUB_OUTPUT
      
-  # automerge:
-  #   name: If plugin-only, approve and merge
-  #   runs-on: ubuntu-latest
-  #   needs: checkchanges
-  #   env:
-  #     PLUGIN_INFO: needs.checkchanges.outputs.PLUGIN_INFO
-  #   steps:
-  #     - name: check if plugin-only
-  #       run: |
-  #         echo "IS_PLUGIN_ONLY=$(jq -r ".is_plugin_only" <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-  #     - name: Auto Approve
-  #       if: $IS_PLUGIN_ONLY == 'true'
-  #       uses: hmarr/auto-approve-action@v3.1.0
+  automerge:
+    name: If plugin-only, approve and merge
+    runs-on: ubuntu-latest
+    needs: checkchanges
+    env:
+      PLUGIN_INFO: needs.checkchanges.outputs.PLUGIN_INFO
+    steps:
+      - name: check if plugin-only
+        run: |
+          echo "IS_PLUGIN_ONLY=$(jq -r ".is_plugin_only" <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+      # - name: Auto Approve
+      #   if: $IS_PLUGIN_ONLY == 'true'
+      #   uses: hmarr/auto-approve-action@v3.1.0
 
   #     # - name: Add automerge label
   #     #   uses: actions-ecosystem/action-add-labels@v1
