@@ -83,4 +83,5 @@ if __name__ == '__main__':
 	plugins_dict = is_plugin_only(non_plugin_files_changed, plugins_dict)
 	plugins_dict = create_plugins_dict(plugin_files_changed, plugins_dict)
 
+	plugins_dict = f'\'{plugins_dict}\''
 	print(str(plugins_dict).replace('\'', '\"'))
