@@ -50,16 +50,16 @@ jobs:
       - name: Sanity check 
         run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
      
-  automerge:
-    name: If plugin-only, approve and merge
-    runs-on: ubuntu-latest
-    needs: checkchanges
-    if: |
-      contains( github.event.pull_request.labels.*.name, 'automerge') &&
-      ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
-    steps:
-      - name: Auto Approve
-        uses: hmarr/auto-approve-action@v3.1.0
+  # automerge:
+  #   name: If plugin-only, approve and merge
+  #   runs-on: ubuntu-latest
+  #   needs: checkchanges
+  #   if: |
+  #     contains( github.event.pull_request.labels.*.name, 'automerge') &&
+  #     ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
+  #   steps:
+  #     - name: Auto Approve
+  #       uses: hmarr/auto-approve-action@v3.1.0
 
       # - name: Add automerge label
       #   uses: actions-ecosystem/action-add-labels@v1
@@ -67,7 +67,7 @@ jobs:
       #     labels:
       #       automerge
 
-      - name: Auto Merge
-        uses: plm9606/automerge_actions@1.2.2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Auto Merge
+      #   uses: plm9606/automerge_actions@1.2.2
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
