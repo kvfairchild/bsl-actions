@@ -61,8 +61,7 @@ def create_plugins_dict():
 
 	plugin_files_changed, non_plugin_files_changed = get_changed_files()
 
-	plugins_dict = {"run_score": "false",
-					"models_and_benchmarks": {}}
+	plugins_dict = {"run_score": "false"}
 
 	scoring_plugins = ("models", "benchmarks")
 	scoring_plugin_paths = tuple([f'brainscore_language/{plugin_type}/' for plugin_type in scoring_plugins])
@@ -72,9 +71,8 @@ def create_plugins_dict():
 		for plugin_type in scoring_plugins:
 			plugin_dirs = set([fname.split('/')[2] for fname in model_and_benchmark_files if f'/{plugin_type}/' in fname])
 			plugins_to_score = _get_registered_plugins(plugin_type, plugin_dirs)
-			plugins_dict["models_and_benchmarks"][plugin_type] = ' '.join(plugins_to_score)
+			plugins_dict[plugin_type] = ' '.join(plugins_to_score)
 
-	plugins_dict["models_and_benchmarks"] = str(plugins_dict["models_and_benchmarks"])
 	print(str(plugins_dict).replace('\'', '\"'))
 
 
