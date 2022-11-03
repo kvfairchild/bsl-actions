@@ -9,7 +9,7 @@ permissions: write-all
 
 jobs:
   checkchanges:
-    name: Check if PR is plugin-only
+    name: Get plugins to score
     runs-on: ubuntu-latest
     if: ${{ github.event.label.name == 'automerge' }}
     steps:
