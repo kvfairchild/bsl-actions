@@ -74,7 +74,7 @@ def create_plugins_dict():
 			plugins_to_score = _get_registered_plugins(plugin_type, plugin_dirs)
 			plugins_dict["models_and_benchmarks"][plugin_type] = ' '.join(plugins_to_score)
 
-	print(str(plugins_dict))
+	print(str(plugins_dict).replace('\'', '\"'))
 
 
 if __name__ == '__main__':
