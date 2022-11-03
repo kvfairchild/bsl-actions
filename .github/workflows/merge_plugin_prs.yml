@@ -1,11 +1,3 @@
-### 
-# Runs on PRs labeled "automerge" after CI checks pass.
-# Includes all auto-generated PRs from website submission.
-# Checks if triggering PR modifies any code outside plugin dirs.
-# If no changes are made outside /benchmarks, /data, /models, or /metrics,
-# the PR is automatically approved and merged after checks pass.
-### 
-
 name: Merge plugin-only PRs
 
 on:
@@ -14,19 +6,18 @@ on:
       - opened
       - edited
       - reopened
-      - labeled
       - ready_for_review
       - synchronize
-  # check_suite:
-  #   conclusion: success
+  check_suite:
+    types:
+      - completed
 
 permissions: write-all
 
 jobs:
   checkchanges:
-    name: Check if PR is plugin-only
+    name: Check if PR only changes /benchmarks and/or /models
     runs-on: ubuntu-latest
-    if: contains( github.event.pull_request.labels.*.name, 'automerge')
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -39,33 +30,27 @@ jobs:
           filters: |
             changed:
               - '**'
-
       - name: Save changed files to env var
         run: echo "CHANGED_FILES=${{ steps.filter.outputs.changed_files }}" >> $GITHUB_ENV
       
       - name: Parse changed files with python script
         run: |
-          echo "IS_PLUGIN_ONLY=$(python parse_changed_files.py is_plugin_only ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
-
-      - name: Sanity check 
-        run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
+          echo "IS_PLUGIN_ONLY=$(python parse_changed_files.py ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
      
   automerge:
-    name: If plugin-only, approve and merge
+    name: If only plugin files are changed, automatically approve and merge
     runs-on: ubuntu-latest
     needs: checkchanges
-    if: |
-      contains( github.event.pull_request.labels.*.name, 'automerge') &&
-      ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
+    # if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
     steps:
       - name: Auto Approve
         uses: hmarr/auto-approve-action@v3.1.0
 
-      # - name: Add automerge label
-      #   uses: actions-ecosystem/action-add-labels@v1
-      #   with:
-      #     labels:
-      #       automerge
+      - name: Add automerge label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels:
+            automerge
 
       - name: Auto Merge
         uses: plm9606/automerge_actions@1.2.2
