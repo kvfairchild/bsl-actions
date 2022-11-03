@@ -76,7 +76,7 @@ jobs:
       #     labels:
       #       automerge
 
- posttojenkins:
+  posttojenkins:
     name: POST job request to Jenkins
     runs-on: ubuntu-latest
     needs: checkchanges
