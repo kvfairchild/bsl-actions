@@ -61,7 +61,9 @@ def create_plugins_dict():
 
 	plugin_files_changed, non_plugin_files_changed = get_changed_files()
 
-	plugins_dict = {"run_score": "false"}
+	plugins_dict = {"run_score": "false",
+					"models": "",
+					"benchmarks" : ""}
 
 	scoring_plugins = ('models', 'benchmarks')
 	scoring_plugin_paths = tuple([f'brainscore_language/{plugin_type}/' for plugin_type in scoring_plugins])
