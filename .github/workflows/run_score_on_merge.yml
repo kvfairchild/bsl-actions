@@ -30,7 +30,7 @@ jobs:
       - name: Parse changed files with python script
         id: scriptout
         run: |
-          echo "plugins_to_run=$(python .github/workflows/parse_changed_files.py create_plugins_dict ${{ env.CHANGED_FILES }})" > $HOME/plugins.json
+          echo "plugins_to_run=$(python .github/workflows/parse_changed_files.py create_plugins_dict ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
   
   posttojenkins:
     name: POST job request to Jenkins
@@ -45,17 +45,17 @@ jobs:
     steps:
       - name: Set env variables from checkchanges output
         run: |
-            echo "RUN_SCORE=$(jq -r '.run_score' <<< $HOME/plugins.json)" >> $GITHUB_ENV
-            echo "MODELS_AND_BENCHMARKS=$(jq -r '.models_and_benchmarks' <<< $HOME/plugins.json)" >> $GITHUB_ENV
+            echo "RUN_SCORE=$(jq -r ".run_score" <<< "$PLUGINS")" >> $GITHUB_ENV
+            echo "MODELS_AND_BENCHMARKS=$(jq -r ".models_and_benchmarks" <<< "$PLUGINS")" >> $GITHUB_ENV
       - name: Set job params from env variables
         run: |
           echo "JOB_PARAMS=${{ env.MODELS_AND_BENCHMARKS }}" >> $GITHUB_ENV
       - name: build urls
-        if: env.RUN_SCORE == 'true'
+        if: env.RUN_SCORE == "true"
         run: |
           echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
           echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
       - name: POST job
-        if: env.RUN_SCORE == 'true'
+        if: env.RUN_SCORE == "true"
         run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
   
