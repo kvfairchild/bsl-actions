@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       is_plugin_only: ${{ steps.is_plugin_only.outputs.is_plugin_only }}
-      plugins_to_run: ${{ steps.scriptout.outputs.plugins_to_run }}
+      plugins_to_run: ${{ steps.plugins_to_run.outputs.plugins_to_run }}
     if: contains( github.event.pull_request.labels.*.name, 'automerge')
     steps:
       - name: Check out repository code
