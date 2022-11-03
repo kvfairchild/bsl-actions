@@ -57,7 +57,7 @@ jobs:
     #   ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
     steps:
       - name: Sanity check 
-      run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
+        run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
   #     - name: Auto Approve
   #       uses: hmarr/auto-approve-action@v3.1.0
 
