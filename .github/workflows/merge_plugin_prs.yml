@@ -59,21 +59,21 @@ jobs:
       - name: check if plugin-only
         run: |
           echo "IS_PLUGIN_ONLY=$(jq -r '.is_plugin_only' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-      # - name: Auto Approve
-      #   if: $IS_PLUGIN_ONLY == 'true'
-      #   uses: hmarr/auto-approve-action@v3.1.0
+      - name: Auto Approve
+        if: $IS_PLUGIN_ONLY == 'true'
+        uses: hmarr/auto-approve-action@v3.1.0
 
-  #     # - name: Add automerge label
-  #     #   uses: actions-ecosystem/action-add-labels@v1
-  #     #   with:
-  #     #     labels:
-  #     #       automerge
+      # - name: Add automerge label
+      #   uses: actions-ecosystem/action-add-labels@v1
+      #   with:
+      #     labels:
+      #       automerge
 
-  #     - name: Auto Merge
-  #       if: $IS_PLUGIN_ONLY == 'true'
-  #       uses: plm9606/automerge_actions@1.2.2
-  #       with:
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Auto Merge
+        if: $IS_PLUGIN_ONLY == 'true'
+        uses: plm9606/automerge_actions@1.2.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   # posttojenkins:
   #   name: POST job request to Jenkins
