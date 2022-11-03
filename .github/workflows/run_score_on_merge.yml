@@ -10,7 +10,7 @@ jobs:
     name: Get plugins to score
     runs-on: ubuntu-latest
     outputs:
-      output: ${{ steps.scriptout.outputs.is_plugin_only }}
+      output: ${{ steps.scriptout.outputs.plugins_to_run }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
       - name: Parse changed files with python script
         id: scriptout
         run: |
-          echo "is_plugin_only=$(python .github/workflows/parse_changed_files.py create_plugins_dict ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+          echo "plugins_to_run=$(python .github/workflows/parse_changed_files.py create_plugins_dict ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
   
   posttojenkins:
     name: POST job request to Jenkins
@@ -56,5 +56,6 @@ jobs:
           echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
           echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
       - name: POST job
+        if: env.RUN_SCORE == 'true'
         run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
   
