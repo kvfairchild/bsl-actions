@@ -27,8 +27,7 @@ jobs:
     name: Get plugin info
     runs-on: ubuntu-latest
     outputs:
-      is_plugin_only: ${{ steps.is_plugin_only.outputs.is_plugin_only }}
-      plugins_to_run: ${{ steps.plugins_to_run.outputs.plugins_to_run }}
+      output: ${{ steps.plugininfo.outputs.output }}
     if: contains( github.event.pull_request.labels.*.name, 'automerge')
     steps:
       - name: Check out repository code
@@ -46,15 +45,10 @@ jobs:
       - name: Save changed files to env var
         run: echo "CHANGED_FILES=${{ steps.filter.outputs.changed_files }}" >> $GITHUB_ENV
       
-      - name: Check if PR only changes plugins
-        id: is_plugin_only
-        run: |
-          echo "is_plugin_only=$(python .github/workflows/parse_changed_files.py is_plugin_only ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
-     
       - name: Create dictionary of changed plugin info
-        id: plugins_to_run
+        id: plugininfo
         run: |
-          echo "plugins_to_run=$(python .github/workflows/parse_changed_files.py create_plugins_dict ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+          echo "plugininfo=$(python .github/workflows/parse_changed_files.py ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
 
   automerge:
     name: If plugin-only PR, approve and merge
