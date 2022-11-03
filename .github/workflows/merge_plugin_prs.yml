@@ -106,5 +106,6 @@ jobs:
      
       - name: POST job
         if: env.RUN_SCORE == 'true'
-        echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
-        run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_USR_TOKEN }} ${{ env.URL }}
+        run: |
+          echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV 
+          curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_USR_TOKEN }} ${{ env.URL }}
