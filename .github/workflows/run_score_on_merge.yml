@@ -11,7 +11,7 @@ jobs:
   checkchanges:
     name: Check if PR is plugin-only
     runs-on: ubuntu-latest
-    if: ${{ github.event.label.name == automerge }}
+    if: ${{ github.event.label.name == "automerge" }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
