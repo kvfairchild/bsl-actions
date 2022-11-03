@@ -51,9 +51,7 @@ jobs:
     name: If plugin-only, approve and merge
     runs-on: ubuntu-latest
     needs: checkchanges
-    if: |
-      contains( github.event.pull_request.labels.*.name, 'automerge') &&
-      ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
+    if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
     steps:
       - name: Auto Approve
         uses: hmarr/auto-approve-action@v3.1.0
