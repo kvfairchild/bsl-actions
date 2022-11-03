@@ -47,7 +47,7 @@ jobs:
       - name: Parse changed files with python script
         id: getpluginfo
         run: |
-          echo "PLUGIN_INFO=$(python .github/workflows/parse_changed_files.py ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+          echo "PLUGIN_INFO=$(python .github/workflows/parse_changed_files.py '${{ env.CHANGED_FILES }}')" >> $GITHUB_OUTPUT
      
   automerge:
     name: If plugin-only, approve and merge

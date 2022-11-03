@@ -86,6 +86,3 @@ if __name__ == '__main__':
 	plugins_dict = plugins_to_score(plugins_dict, plugin_files_changed)
 
 	print(plugins_dict)
-
-
-
