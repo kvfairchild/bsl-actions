@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - main
-      
-  workflow_run:
-    workflows: [Merge plugin-only PRs]
-    types:
-      - completed
 
 jobs:
   checkchanges:
