@@ -5,13 +5,11 @@ on:
     branch:
       - main
 
-permissions: write-all
-
 jobs:
   checkchanges:
     name: Get plugins to score
     runs-on: ubuntu-latest
-    if: ${{ github.event.label.name == 'automerge' }}
+    if: contains( github.event.pull_request.labels.*.name, 'automerge')
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -37,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkchanges
     env:
-      PLUGINS: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
+      PLUGINS: needs.checkchanges.outputs.PLUGINS
       JENKINS_URL: "braintree.mit.edu:8080"
       USER: "kvg0"
       JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
