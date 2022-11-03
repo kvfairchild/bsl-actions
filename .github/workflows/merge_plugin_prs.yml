@@ -60,7 +60,7 @@ jobs:
         run: |
           echo "IS_PLUGIN_ONLY=$(jq -r '.is_plugin_only' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
       - name: Auto Approve
-        if: $IS_PLUGIN_ONLY == 'true'
+        if: ${{ env.IS_PLUGIN_ONLY }} == 'true'
         uses: hmarr/auto-approve-action@v3.1.0
 
       # - name: Add automerge label
@@ -70,7 +70,7 @@ jobs:
       #       automerge
 
       - name: Auto Merge
-        if: $IS_PLUGIN_ONLY == 'true'
+        if: ${{ env.IS_PLUGIN_ONLY }} == 'true'
         uses: plm9606/automerge_actions@1.2.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
