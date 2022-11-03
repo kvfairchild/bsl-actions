@@ -83,6 +83,6 @@ if __name__ == '__main__':
 
 	print("OK")
 
-	function = getattr(sys.modules[__name__], sys.argv[1])
-	output = function()
-	print(output)
+	# function = getattr(sys.modules[__name__], sys.argv[1])
+	# output = function()
+	# print(output)
