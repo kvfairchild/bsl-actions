@@ -83,7 +83,6 @@ jobs:
       PLUGIN_INFO: ${{ needs.checkchanges.outputs.PLUGIN_INFO }}
       JENKINS_URL: "braintree.mit.edu:8080"
       USER: "kvg0"
-      JENKINS_USR_TOKEN: ${{ secrets.JENKINS_USR_TOKEN }}
       JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
       JOB_PATH: "dev_run_benchmarks"
     steps:
@@ -92,7 +91,6 @@ jobs:
             echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
             echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
             echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-            echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:$JENKINS_USR_TOKEN" >> $GITHUB_ENV
      
       - name: Set job params from env vars
         run: |
@@ -102,17 +100,7 @@ jobs:
         run: |
           echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
 
-      - name: Get crumb
-        if: env.RUN_SCORE == 'true'
-        run: |
-          echo "CRUMB_RESPONSE=$(curl -v -X GET ${{ env.CRUMB_URL }})" >> $GITHUB_ENV
-     
-      - name: Parse crumb from response
-        if: env.RUN_SCORE == 'true'
-        run: |
-          echo "CRUMB=$(jq -r '.crumb' <<< "$CRUMB_RESPONSE")" >> $GITHUB_ENV
-     
       - name: POST job
         if: env.RUN_SCORE == 'true'
         run: |
-          curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_USR_TOKEN }} ${{ env.URL }} -H 'Jenkins-Crumb:${{ env.CRUMB }}'
+          curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
