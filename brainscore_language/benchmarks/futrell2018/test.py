@@ -41,5 +41,3 @@ class TestBenchmark:
         assert ceiling == approx(.858, abs=.0005)
         assert ceiling.raw.median('split') == ceiling
         assert ceiling.uncorrected_consistencies.median('split') < ceiling
-
-    # TEST LAST ONE

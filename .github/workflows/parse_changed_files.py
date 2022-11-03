@@ -9,7 +9,7 @@ PLUGIN_DIRS = ['benchmarks', 'data', 'models', 'metrics']
 
 def get_changed_files() -> List[str]:
 
-	changed_files = sys.argv[2]
+	changed_files = sys.argv[1]
 	changed_files_list = changed_files.split()
 
 	plugin_files_changed = []
@@ -24,14 +24,14 @@ def get_changed_files() -> List[str]:
 	return plugin_files_changed, non_plugin_files_changed
 
 
-def is_plugin_only():
-
-	plugin_files_changed, non_plugin_files_changed = get_changed_files()
+def is_plugin_only(plugins_dict, non_plugin_files_changed):
 
 	if len(non_plugin_files_changed) > 0:
-		print("false")
+		plugins_dict["is_plugin_only"] = "false"
 	else:
-		print("true")
+		plugins_dict["is_plugin_only"] = "true"
+
+	return plugins_dict
 
 
 def _get_registered_plugins(plugin_type: str, plugin_dirs: List[str]) -> List[str]:
@@ -57,11 +57,9 @@ def _get_registered_plugins(plugin_type: str, plugin_dirs: List[str]) -> List[st
 	return registered_plugins
 
 
-def create_plugins_dict():
+def plugins_to_score(plugins_dict, plugin_files_changed) -> str:
 
-	plugin_files_changed, non_plugin_files_changed = get_changed_files()
-
-	plugins_dict = {"run_score": "false"}
+	plugins_dict["run_score"] = "false"
 
 	scoring_plugins = ("models", "benchmarks")
 	scoring_plugin_paths = tuple([f'brainscore_language/{plugin_type}/' for plugin_type in scoring_plugins])
@@ -74,11 +72,16 @@ def create_plugins_dict():
 			plugins_dict[plugin_type] = ' '.join(plugins_to_score)
 
 	plugins_dict = str(plugins_dict).replace('\'', '\"')
-	plugins_dict = f'\'{plugins_dict}\''
-	print(plugins_dict)
+	
+	return plugins_dict
 
 
 if __name__ == '__main__':
 
-	function = getattr(sys.modules[__name__], sys.argv[1])
-	function()
+	plugin_files_changed, non_plugin_files_changed = get_changed_files()
+
+	plugins_dict = {}
+	plugins_dict = is_plugin_only(plugins_dict, non_plugin_files_changed)
+	plugins_dict = plugins_to_score(plugins_dict, plugin_files_changed)
+
+	print(plugins_dict)
