@@ -1,13 +1,16 @@
 name: Score plugins on merge
 
 on:
-  push:
+  pull_request_target:
+    types:
+      - closed
     branches:
       - main
 
 jobs:
   checkchanges:
     name: Get plugins to score
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       output: ${{ steps.scriptout.outputs.plugins_to_run }}
@@ -34,6 +37,7 @@ jobs:
   
   posttojenkins:
     name: POST job request to Jenkins
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     needs: checkchanges
     env:
