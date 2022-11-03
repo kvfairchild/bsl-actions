@@ -17,9 +17,8 @@ on:
       - labeled
       - ready_for_review
       - synchronize
-  check_suite:
-    types:
-      - completed
+  # check_suite:
+  #   conclusion: success
 
 permissions: write-all
 
@@ -45,15 +44,13 @@ jobs:
       
       - name: Parse changed files with python script
         run: |
-          echo "IS_PLUGIN_ONLY=$(python parse_changed_files.py is_plugin_only ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+          echo "IS_PLUGIN_ONLY=$(python .github/workflows/parse_changed_files.py is_plugin_only ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
      
   automerge:
     name: If plugin-only, approve and merge
     runs-on: ubuntu-latest
     needs: checkchanges
-    if: |
-      contains( github.event.pull_request.labels.*.name, 'automerge') &&
-      ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
+    if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
     steps:
       - name: Auto Approve
         uses: hmarr/auto-approve-action@v3.1.0
