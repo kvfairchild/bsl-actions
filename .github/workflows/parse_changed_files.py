@@ -9,7 +9,7 @@ PLUGIN_DIRS = ['benchmarks', 'data', 'models', 'metrics']
 
 def get_changed_files() -> List[str]:
 
-	changed_files = sys.argv[2]
+	changed_files = sys.argv[1]
 	changed_files_list = changed_files.split()
 
 	plugin_files_changed = []
