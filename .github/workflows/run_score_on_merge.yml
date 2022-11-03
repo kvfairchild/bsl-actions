@@ -88,10 +88,11 @@ jobs:
       - name: Set env vars with plugin info
         run: |
             echo "RUN_SCORE=$(jq -r ".run_score" <<< "$PLUGINS")" >> $GITHUB_ENV
-            echo "MODELS_AND_BENCHMARKS=$(jq -r ".models_and_benchmarks" <<< "$PLUGINS")" >> $GITHUB_ENV
+            echo "MODELS=$(jq -r ".models" <<< "$PLUGINS")" >> $GITHUB_ENV
+            echo "BENCHMARKS=$(jq -r ".benchmarks" <<< "$PLUGINS")" >> $GITHUB_ENV
       - name: Set job params from env variables
         run: |
-          echo "JOB_PARAMS=${{ env.MODELS_AND_BENCHMARKS }}" >> $GITHUB_ENV
+          echo "JOB_PARAMS=${{ env.BENCHMARKS }}" >> $GITHUB_ENV
       - name: Build URLs
         if: env.RUN_SCORE == 'true'
         run: |
@@ -100,4 +101,3 @@ jobs:
       - name: POST job
         if: env.RUN_SCORE == 'true'
         run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
-        
