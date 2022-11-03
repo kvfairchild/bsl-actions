@@ -24,7 +24,7 @@ permissions: write-all
 
 jobs:
   checkchanges:
-    name: Check if PR is plugin-only
+    name: Check if PR only changes /benchmarks and/or /models
     runs-on: ubuntu-latest
     if: contains( github.event.pull_request.labels.*.name, 'automerge')
     steps:
@@ -39,7 +39,6 @@ jobs:
           filters: |
             changed:
               - '**'
-
       - name: Save changed files to env var
         run: echo "CHANGED_FILES=${{ steps.filter.outputs.changed_files }}" >> $GITHUB_ENV
       
@@ -51,9 +50,7 @@ jobs:
     name: If plugin-only, approve and merge
     runs-on: ubuntu-latest
     needs: checkchanges
-    if: |
-      contains( github.event.pull_request.labels.*.name, 'automerge') &&
-      ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
+    if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
     steps:
       - name: Auto Approve
         uses: hmarr/auto-approve-action@v3.1.0
