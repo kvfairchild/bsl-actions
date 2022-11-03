@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkchanges
     env:
-      PLUGIN_INFO: needs.checkchanges.outputs.PLUGIN_INFO
+      PLUGIN_INFO: ${{ needs.checkchanges.outputs.PLUGIN_INFO }}
     steps:
       - name: check if plugin-only
         run: |
