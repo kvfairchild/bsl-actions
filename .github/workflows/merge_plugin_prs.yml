@@ -115,4 +115,4 @@ jobs:
       - name: POST job
         if: env.RUN_SCORE == 'true'
         run: |
-          curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_USR_TOKEN }} ${{ env.URL }}
+          curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_USR_TOKEN }} ${{ env.URL }} -H 'Jenkins-Crumb:${{ env.CRUMB }}'
