@@ -44,7 +44,7 @@ jobs:
       run: |
           echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGINS")" >> $GITHUB_ENV
           echo "MODELS_AND_BENCHMARKS=$(jq -r '.models_and_benchmarks' <<< "$PLUGINS")" >> $GITHUB_ENV
-          echo "JOB_PARAMS={${{ env.models_and_benchmarks }}"" >> $GITHUB_ENV
+          echo "JOB_PARAMS=${{ env.models_and_benchmarks }}" >> $GITHUB_ENV
     - name: build urls
       if: env.run_score == 'true'
       run: |
