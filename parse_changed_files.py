@@ -28,10 +28,11 @@ def is_plugin_only():
 
 	plugin_files_changed, non_plugin_files_changed = get_changed_files()
 
+	is_plugin_only = "true"
 	if len(non_plugin_files_changed) > 0:
-		print("false")
-	else:
-		print("true")
+		is_plugin_only = "false"
+	
+	return is_plugin_only
 
 
 def _get_registered_plugins(plugin_type: str, plugin_dirs: List[str]) -> List[str]:
@@ -75,10 +76,11 @@ def create_plugins_dict():
 			plugins_to_score = _get_registered_plugins(plugin_type, plugin_dirs)
 			plugins_dict[plugin_type] = ' '.join(plugins_to_score)
 
-	print(plugins_dict)
+	return plugins_dict
 
 
 if __name__ == '__main__':
 
 	function = getattr(sys.modules[__name__], sys.argv[1])
-	function()
+	output = function()
+	print(output)
