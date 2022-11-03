@@ -82,5 +82,3 @@ if __name__ == '__main__':
 
 	function = getattr(sys.modules[__name__], sys.argv[1])
 	function()
-
-
