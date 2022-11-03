@@ -46,6 +46,9 @@ jobs:
       - name: Parse changed files with python script
         run: |
           echo "IS_PLUGIN_ONLY=$(python .github/workflows/parse_changed_files.py is_plugin_only ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+
+      - name: Sanity check 
+        run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
      
   automerge:
     name: If plugin-only, approve and merge
