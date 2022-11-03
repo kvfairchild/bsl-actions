@@ -1,0 +1,57 @@
+name: Score plugins on merge
+
+on:
+  push:
+    branch:
+      - main
+
+permissions: write-all
+
+jobs:
+  checkchanges:
+    name: Check if PR is plugin-only
+    runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'automerge' }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Get changed files
+        uses: dorny/paths-filter@v2.11.1
+        id: filter
+        with:
+          list-files: shell
+          filters: |
+            changed:
+              - '**'
+
+      - name: Save changed files to env var
+        run: echo "CHANGED_FILES=${{ steps.filter.outputs.changed_files }}" >> $GITHUB_ENV
+      
+      - name: Parse changed files with python script
+        run: |
+          echo "PLUGINS=$(python .github/workflows/parse_changed_files.py create_plugins_dict ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+
+  posttojenkins:
+    name: POST job request to Jenkins
+    runs-on: ubuntu-latest
+    needs: checkchanges
+    env:
+      JENKINS_URL: "braintree.mit.edu:8080"
+      USER: "kvg0"
+      JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
+      JOB_PATH: "dev_run_benchmarks"
+      JOB_PARAMS: '{"models":"brendel.Geirhos2021colour-top1"}'
+    steps:
+    - name: Set env variables from secret
+      run: |
+          echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGINS")" >> $GITHUB_ENV
+          echo "MODELS=$(jq -r '.models' <<< "$PLUGINS")" >> $GITHUB_ENV
+          echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGINS")" >> $GITHUB_ENV
+    - name: build urls
+      run: |
+        echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
+        echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?models=brendel.Geirhos2021colour-top1&token=$JENKINS_TOKEN" >> $GITHUB_ENV
+    - name: POST job
+      run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
+  
