@@ -92,14 +92,19 @@ jobs:
             echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
             echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
             echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+     
       - name: Set job params from env variables
         run: |
           echo "JOB_PARAMS=${{ env.BENCHMARKS }}" >> $GITHUB_ENV
-      - name: Build URLs
+     
+      - name: get crumb
         if: env.RUN_SCORE == 'true'
         run: |
           echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_USR_TOKEN }}" >> $GITHUB_ENV
-          echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
+          echo "CRUMB_RESPONSE=$(curl -v -X GET ${{ env.CRUMB_URL }})" >> $GITHUB_ENV
+          echo "CRUMB=$(jq -r '.crumb' <<< "$CRUMB_RESPONSE")" >> $GITHUB_ENV
+     
       - name: POST job
         if: env.RUN_SCORE == 'true'
+        echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
         run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_USR_TOKEN }} ${{ env.URL }}
