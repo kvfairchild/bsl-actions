@@ -60,22 +60,23 @@ def _get_registered_plugins(plugin_type: str, plugin_dirs: List[str]) -> List[st
 def create_plugins_dict():
 
 	plugin_files_changed, non_plugin_files_changed = get_changed_files()
+	print(str(plugin_files_changed))
 
-	plugins_dict = {"run_score": "false"}
+	# plugins_dict = {"run_score": "false"}
 
-	scoring_plugins = ("models", "benchmarks")
-	scoring_plugin_paths = tuple([f'brainscore_language/{plugin_type}/' for plugin_type in scoring_plugins])
-	model_and_benchmark_files = [fname for fname in plugin_files_changed if fname.startswith(scoring_plugin_paths)]
-	if len(model_and_benchmark_files) > 0:
-		plugins_dict["run_score"] = "true"
-		for plugin_type in scoring_plugins:
-			plugin_dirs = set([fname.split('/')[2] for fname in model_and_benchmark_files if f'/{plugin_type}/' in fname])
-			plugins_to_score = _get_registered_plugins(plugin_type, plugin_dirs)
-			plugins_dict[plugin_type] = ' '.join(plugins_to_score)
+	# scoring_plugins = ("models", "benchmarks")
+	# scoring_plugin_paths = tuple([f'brainscore_language/{plugin_type}/' for plugin_type in scoring_plugins])
+	# model_and_benchmark_files = [fname for fname in plugin_files_changed if fname.startswith(scoring_plugin_paths)]
+	# if len(model_and_benchmark_files) > 0:
+	# 	plugins_dict["run_score"] = "true"
+	# 	for plugin_type in scoring_plugins:
+	# 		plugin_dirs = set([fname.split('/')[2] for fname in model_and_benchmark_files if f'/{plugin_type}/' in fname])
+	# 		plugins_to_score = _get_registered_plugins(plugin_type, plugin_dirs)
+	# 		plugins_dict[plugin_type] = ' '.join(plugins_to_score)
 
-	# plugins_dict =
-	# plugins_dict = f'\'{plugins_dict}\''
-	print(str(plugins_dict).replace('\'', '\"'))
+	# # plugins_dict =
+	# # plugins_dict = f'\'{plugins_dict}\''
+	# print(str(plugins_dict).replace('\'', '\"'))
 
 
 if __name__ == '__main__':
