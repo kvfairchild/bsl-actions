@@ -40,17 +40,18 @@ jobs:
       JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
       JOB_PATH: "dev_run_benchmarks"
     steps:
-    - name: Set env variables from checkchanges output
-      run: |
-          echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGINS")" >> $GITHUB_ENV
-          echo "MODELS_AND_BENCHMARKS=$(jq -r '.models_and_benchmarks' <<< "$PLUGINS")" >> $GITHUB_ENV
-    - name: Set job params from env variables
+      - name: Set env variables from checkchanges output
+        run: |
+            echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGINS")" >> $GITHUB_ENV
+            echo "MODELS_AND_BENCHMARKS=$(jq -r '.models_and_benchmarks' <<< "$PLUGINS")" >> $GITHUB_ENV
+      - name: Set job params from env variables
+        run: |
           echo "JOB_PARAMS=${{ env.MODELS_AND_BENCHMARKS }}" >> $GITHUB_ENV
-    - name: build urls
-      if: env.RUN_SCORE == 'true'
-      run: |
-        echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
-        echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
-    - name: POST job
-      run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
+      - name: build urls
+        if: env.RUN_SCORE == 'true'
+        run: |
+          echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
+          echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
+      - name: POST job
+        run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
   
