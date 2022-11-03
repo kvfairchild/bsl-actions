@@ -4,7 +4,7 @@
 # Checks if triggering PR modifies any code outside plugin dirs.
 # If no changes are made outside /benchmarks, /data, /models, or /metrics,
 # the PR is automatically approved and merged after checks pass.
-### 
+###
 
 name: Merge and score plugin-only PRs
 
