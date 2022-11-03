@@ -17,8 +17,8 @@ on:
       - labeled
       - ready_for_review
       - synchronize
-  # check_suite:
-  #   conclusion: success
+  check_suite:
+    conclusion: success
 
 permissions: write-all
 
@@ -56,18 +56,16 @@ jobs:
     needs: checkchanges
     if: needs.checkchanges.outputs.output == 'true'
     steps:
-      - name: Why won't you merrrggee
-        run: echo "${{ needs.checkchanges.outputs.output }}"
-      # - name: Auto Approve
-      #   uses: hmarr/auto-approve-action@v3.1.0
+      - name: Auto Approve
+        uses: hmarr/auto-approve-action@v3.1.0
+
+      - name: Auto Merge
+        uses: plm9606/automerge_actions@1.2.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Add automerge label
       #   uses: actions-ecosystem/action-add-labels@v1
       #   with:
       #     labels:
       #       automerge
-
-      # - name: Auto Merge
-      #   uses: plm9606/automerge_actions@1.2.2
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
