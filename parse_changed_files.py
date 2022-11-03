@@ -6,6 +6,7 @@ from typing import List
 
 PLUGIN_DIRS = ['benchmarks', 'data', 'models', 'metrics']
 
+print("OK")
 
 def get_changed_files() -> List[str]:
 
@@ -79,9 +80,9 @@ def create_plugins_dict():
 	return plugins_dict
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-	print("OK")
+# 	print("OK")
 
 	# function = getattr(sys.modules[__name__], sys.argv[1])
 	# output = function()
