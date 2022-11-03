@@ -26,5 +26,3 @@ def test_data():
 
     mean_assembly = assembly.groupby('subject_id').mean()
     assert not np.isnan(mean_assembly).any(), "Each stimulus should have at least one subject's data"
-
-    #"TEST TEST"
