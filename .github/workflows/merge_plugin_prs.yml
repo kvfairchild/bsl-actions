@@ -58,7 +58,7 @@ jobs:
     steps:
       - name: check if plugin-only
         run: |
-          echo "IS_PLUGIN_ONLY=$(jq -r ".is_plugin_only" <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+          echo "IS_PLUGIN_ONLY=$(jq -r '.is_plugin_only' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
       # - name: Auto Approve
       #   if: $IS_PLUGIN_ONLY == 'true'
       #   uses: hmarr/auto-approve-action@v3.1.0
