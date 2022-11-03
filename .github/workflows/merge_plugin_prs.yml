@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     if: contains( github.event.pull_request.labels.*.name, 'automerge')
     outputs:
-      output: ${{ steps.getpluginfo.outputs.PLUGIN_INFO }}
+      PLUGIN_INFO: ${{ steps.getpluginfo.outputs.PLUGIN_INFO }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -57,7 +57,7 @@ jobs:
     steps:
       - name: view PLUGIN_INFO
         run: |
-          echo "${{ needs.checkchanges.outputs.PLUGIN_INFO }}"
+          echo ${{ needs.checkchanges.outputs.PLUGIN_INFO }}
       # - name: Auto Approve
       #   uses: hmarr/auto-approve-action@v3.1.0
 
