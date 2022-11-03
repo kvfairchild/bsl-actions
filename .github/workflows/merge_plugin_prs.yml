@@ -1,3 +1,11 @@
+### 
+# Runs on PRs labeled "automerge" after CI checks pass.
+# Includes all auto-generated PRs from website submission.
+# Checks if triggering PR modifies any code outside plugin dirs.
+# If no changes are made outside /benchmarks, /data, /models, or /metrics,
+# the PR is automatically approved and merged after checks pass.
+### 
+
 name: Merge plugin-only PRs
 
 on:
@@ -9,15 +17,18 @@ on:
       - ready_for_review
       - synchronize
   check_suite:
-    types:
-      - completed
+    conclusion: success
 
 permissions: write-all
 
+env:
+  LABEL_NAME: automerge
+
 jobs:
   checkchanges:
-    name: Check if PR only changes /benchmarks and/or /models
+    name: Check if PR is plugin-only
     runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == env.LABEL_NAME }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -30,27 +41,30 @@ jobs:
           filters: |
             changed:
               - '**'
+
       - name: Save changed files to env var
         run: echo "CHANGED_FILES=${{ steps.filter.outputs.changed_files }}" >> $GITHUB_ENV
       
       - name: Parse changed files with python script
         run: |
-          echo "IS_PLUGIN_ONLY=$(python parse_changed_files.py ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
+          echo "IS_PLUGIN_ONLY=$(python .github/workflows/parse_changed_files.py ${{ env.CHANGED_FILES }})" >> $GITHUB_OUTPUT
      
   automerge:
-    name: If only plugin files are changed, automatically approve and merge
+    name: If plugin-only, approve and merge
     runs-on: ubuntu-latest
     needs: checkchanges
-    # if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
+    if: |
+      ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }} &&
+      ${{ github.event.label.name == 'label_name' }}
     steps:
       - name: Auto Approve
         uses: hmarr/auto-approve-action@v3.1.0
 
-      - name: Add automerge label
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels:
-            automerge
+      # - name: Add automerge label
+      #   uses: actions-ecosystem/action-add-labels@v1
+      #   with:
+      #     labels:
+      #       automerge
 
       - name: Auto Merge
         uses: plm9606/automerge_actions@1.2.2

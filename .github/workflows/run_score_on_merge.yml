@@ -1,0 +1,39 @@
+name: Merge plugin-only PRs
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - ready_for_review
+      - synchronize
+  push:
+    branch:
+      - main
+  workflow_run:
+    workflows: [merge_plugin_prs]
+    types:
+      - completed
+
+permissions: write-all
+
+jobs:
+ posttojenkins:
+    name: POST job request to Jenkins
+    runs-on: ubuntu-latest
+    needs: checkchanges
+    env:
+      JENKINS_URL: "braintree.mit.edu:8080"
+      USER: "kvg0"
+      JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
+      JOB_PATH: "dev_run_benchmarks"
+      JOB_PARAMS: '{"models":"brendel.Geirhos2021colour-top1"}'
+    steps:
+    - name: build urls
+      run: |
+        echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
+        echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?models=brendel.Geirhos2021colour-top1&token=$JENKINS_TOKEN" >> $GITHUB_ENV
+    - name: POST job
+      run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
+  
