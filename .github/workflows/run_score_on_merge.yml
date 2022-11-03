@@ -1,9 +1,7 @@
 name: Score plugins on merge
 
 on:
-  pull_request_target:
-    types:
-      - closed
+  push:
     branches:
       - main
 
