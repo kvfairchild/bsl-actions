@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkchanges
     steps:
-      - name: Check checkchanges output
+      - name: Check input
       run: |
           echo "${{ needs.checkchanges.outputs.plugin_info }}"
 
