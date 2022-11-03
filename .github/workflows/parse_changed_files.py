@@ -73,6 +73,7 @@ def create_plugins_dict():
 			plugins_to_score = _get_registered_plugins(plugin_type, plugin_dirs)
 			plugins_dict[plugin_type] = ' '.join(plugins_to_score)
 
+	plugins_dict = f'\"{plugins_dict}\"'
 	print(str(plugins_dict).replace('\'', '\"'))
 
 
