@@ -50,7 +50,7 @@ jobs:
             echo "BENCHMARKS=$(jq -r ".benchmarks" <<< "$PLUGINS")" >> $GITHUB_ENV
       - name: Set job params from env variables
         run: |
-          echo "JOB_PARAMS=${{ env.models }} ${{ env.benchmarks }}" >> $GITHUB_ENV
+          echo "JOB_PARAMS=${{ env.benchmarks }}" >> $GITHUB_ENV
       - name: build urls
         if: env.RUN_SCORE == 'true'
         run: |
