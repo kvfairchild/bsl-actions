@@ -52,7 +52,7 @@ jobs:
     needs: checkchanges
     # if: |
     #   ${{ github.event.label.name == 'automerge' }} &&
-    #   ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
+    if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
     steps:
       - name: Auto Approve
         uses: hmarr/auto-approve-action@v3.1.0
