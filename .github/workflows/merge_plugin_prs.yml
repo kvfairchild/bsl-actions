@@ -52,6 +52,10 @@ jobs:
       - name: Set env vars with plugin info
         run: |
             echo "is_plugin_only=$(jq -r ".run_score" <<< "$plugininfo")" >> $GITHUB_ENV
+      - name: Check env variables
+        run: |
+            echo ${{ env.plugininfo }}
+            echo ${{ env.is_plugin_only }}
 
   automerge:
     name: If plugin-only PR, approve and merge
