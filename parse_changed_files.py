@@ -26,7 +26,7 @@ for f in changed_files_list:
 
 # def is_plugin_only():
 
-plugin_files_changed, non_plugin_files_changed = get_changed_files()
+# plugin_files_changed, non_plugin_files_changed = get_changed_files()
 
 is_plugin_only = "true"
 if len(non_plugin_files_changed) > 0:
