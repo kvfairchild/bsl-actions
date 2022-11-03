@@ -4,10 +4,10 @@ on:
   push:
     branch:
       - main
-  # workflow_run:
-  #   workflows: [merge_plugin_prs]
-  #   types:
-  #     - completed
+  workflow_run:
+    workflows: [merge_plugin_prs]
+    types:
+      - completed
 
 permissions: write-all
 

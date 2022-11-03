@@ -1,3 +1,4 @@
+import argparse
 import re
 from pathlib import Path
 import sys
@@ -8,7 +9,7 @@ PLUGIN_DIRS = ['benchmarks', 'data', 'models', 'metrics']
 
 def get_changed_files() -> List[str]:
 
-	changed_files = sys.argv[1]
+	changed_files = sys.argv[2]
 	changed_files_list = changed_files.split()
 
 	plugin_files_changed = []
@@ -22,7 +23,18 @@ def get_changed_files() -> List[str]:
 
 	return plugin_files_changed, non_plugin_files_changed
 
-def _get_registered_plugins(plugin_type : str, plugin_dirs: List[str]) -> List[str]:
+
+def is_plugin_only():
+
+	plugin_files_changed, non_plugin_files_changed = get_changed_files()
+
+	if len(non_plugin_files_changed) > 0:
+		print("false")
+	else:
+		print("true")
+
+
+def _get_registered_plugins(plugin_type: str, plugin_dirs: List[str]) -> List[str]:
 	""" 
 	Searches all `plugin_type` __init.py__ files for registered plugins.
 	Returns list of identifiers for each registered plugin. 
@@ -45,14 +57,15 @@ def _get_registered_plugins(plugin_type : str, plugin_dirs: List[str]) -> List[s
 	return registered_plugins
 
 
+def create_plugins_dict():
 
-def create_plugins_dict(plugin_files_list, plugins_only):
+	plugin_files_changed, non_plugin_files_changed = get_changed_files()
 
-	plugins_dict = {"plugins_only": plugins_only, "run_score": "false"}
+	plugins_dict = {"run_score": "false"}
 
 	scoring_plugins = ('models', 'benchmarks')
 	scoring_plugin_paths = tuple([f'brainscore_language/{plugin_type}/' for plugin_type in scoring_plugins])
-	model_and_benchmark_files = [fname for fname in plugin_files_list if fname.startswith(scoring_plugin_paths)]
+	model_and_benchmark_files = [fname for fname in plugin_files_changed if fname.startswith(scoring_plugin_paths)]
 	if len(model_and_benchmark_files) > 0:
 		plugins_dict["run_score"] = "true"
 		for plugin_type in scoring_plugins:
@@ -60,17 +73,12 @@ def create_plugins_dict(plugin_files_list, plugins_only):
 			plugins_to_score = _get_registered_plugins(plugin_type, plugin_dirs)
 			plugins_dict[plugin_type] = ' '.join(plugins_to_score)
 
-	return plugins_dict
+	print(plugins_dict)
 
 
 if __name__ == '__main__':
 
-	plugins_only = "true"
-	
-	plugin_files_changed, non_plugin_files_changed = get_changed_files()
+	function = getattr(sys.modules[__name__], sys.argv[1])
+	function()
 
-	if len(non_plugin_files_changed) > 0:
-		plugins_only = "false"
 
-	plugins_dict = create_plugins_dict(plugin_files_changed, plugins_only)
-	print(plugins_dict)
