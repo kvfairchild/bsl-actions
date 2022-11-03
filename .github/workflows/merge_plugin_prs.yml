@@ -53,7 +53,7 @@ jobs:
     if: true
     steps:
       - name: Why won't you merrrggee
-      run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
+        run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
       # - name: Auto Approve
       #   uses: hmarr/auto-approve-action@v3.1.0
 
