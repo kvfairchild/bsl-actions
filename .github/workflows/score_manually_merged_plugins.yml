@@ -1,6 +1,5 @@
 ### 
-# Runs on PRs labeled "automerge" after CI checks pass.
-# Includes all auto-generated PRs from website submission.
+# Runs on manually submitted PRs labeled "automerge" after CI checks pass.
 # Checks if triggering PR modifies any code outside plugin dirs.
 # If no changes are made outside /benchmarks, /data, /models, or /metrics,
 # the PR is automatically approved and merged after checks pass.
@@ -67,30 +66,32 @@ jobs:
       #     labels:
       #       automerge
 
-  posttojenkins:
+ posttojenkins:
     name: POST job request to Jenkins
     runs-on: ubuntu-latest
     needs: checkchanges
     env:
-      PLUGINS: ${{ needs.checkchanges.outputs.plugins_to_run }}
+      PLUGIN_INFO: ${{ needs.checkchanges.outputs.PLUGIN_INFO }}
       JENKINS_URL: "braintree.mit.edu:8080"
       USER: "kvg0"
       JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
       JOB_PATH: "dev_run_benchmarks"
     steps:
-      - name: Set env vars with plugin info
+      - name: Set env vars (1)
         run: |
-            echo "RUN_SCORE=$(jq -r ".run_score" <<< "$PLUGINS")" >> $GITHUB_ENV
-            echo "MODELS=$(jq -r ".models" <<< "$PLUGINS")" >> $GITHUB_ENV
-            echo "BENCHMARKS=$(jq -r ".benchmarks" <<< "$PLUGINS")" >> $GITHUB_ENV
-      - name: Set job params from env variables
+            echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+            echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+            echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+     
+      - name: Set job params from env vars
         run: |
           echo "JOB_PARAMS=${{ env.BENCHMARKS }}" >> $GITHUB_ENV
-      - name: Build URLs
-        if: env.RUN_SCORE == 'true'
+
+      - name: Set endpoint URL with job params
         run: |
-          echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
           echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
+
       - name: POST job
         if: env.RUN_SCORE == 'true'
-        run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
+        run: |
+          curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
