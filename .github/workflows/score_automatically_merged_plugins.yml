@@ -86,21 +86,20 @@ jobs:
       JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
       JOB_PATH: "dev_run_benchmarks"
     steps:
-      - name: Set env vars (1)
-        run: |
-            echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-            echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-            echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-     
-      - name: Set job params from env vars
-        run: |
-          echo "JOB_PARAMS=${{ env.BENCHMARKS }}" >> $GITHUB_ENV
+      - name: Install brain-score core
+        run: sudo apt-get install -y brainscore_core@git+https://github.com/brain-score/core.git@main
 
-      - name: Set endpoint URL with job params
-        run: |
-          echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
+      # - name: Extract params from PLUGIN_INFO
+      #   run: |
+      #       echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+      #       echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+      #       echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
 
-      - name: POST job
-        if: env.RUN_SCORE == 'true'
-        run: |
-          curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
+      # - name: Set endpoint URL
+      #   run: |
+      #     echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?models=$MODELSbenchmarks=$BENCHMARKS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
+
+      # - name: POST job
+      #   if: env.RUN_SCORE == 'true'
+      #   run: |
+      #     curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
