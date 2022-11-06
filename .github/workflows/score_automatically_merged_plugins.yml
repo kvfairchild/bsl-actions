@@ -88,7 +88,7 @@ jobs:
     steps:
       - name: Add public, competition, and model_type to PLUGIN_INFO
         run: |
-            echo "PLUGIN_INFO=$(<<<$PLUGIN_INFO jq '. + {public: "false", competition: "None", model_type: "artificialsubject"}')" >> $GITHUB_ENV
+            echo "PLUGIN_INFO="$(<<<$PLUGIN_INFO jq '. + {public: "false", competition: "None", model_type: "artificialsubject"}')"" >> $GITHUB_ENV
 
       - name: Extract params from PLUGIN_INFO
         run: |
