@@ -87,7 +87,7 @@ jobs:
       JOB_PATH: "dev_run_benchmarks"
     steps:
       - name: Install brain-score core
-        run: sudo apt-get install -y brainscore_core@git+https://github.com/brain-score/core.git@main
+        run: python -m pip install brainscore_core@git+https://github.com/brain-score/core.git@main
 
       - name: Add to PLUGIN_INFO
         run: |
