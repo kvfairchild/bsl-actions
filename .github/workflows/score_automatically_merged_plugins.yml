@@ -103,7 +103,8 @@ jobs:
       - name: Call entrypoints
         if: env.RUN_SCORE == 'true'
         run: |
-          echo "PLUGIN_INFO=$(python .github/workflows/entrypoints.py process_github_submission '${{ env.PLUGIN_INFO }}')" >> $GITHUB_OUTPUT
+          pwd
+          python .github/workflows/entrypoints.py process_github_submission '${{ env.PLUGIN_INFO }}'
      
 
       # - name: Set endpoint URL
