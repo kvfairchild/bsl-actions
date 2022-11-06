@@ -60,7 +60,7 @@ jobs:
         run: |
           echo "IS_PLUGIN_ONLY=$(jq -r '.is_plugin_only' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
       - name: Auto Approve
-        if: ${{ env.IS_PLUGIN_ONLY }} == 'true'
+        if: env.IS_PLUGIN_ONLY == 'true'
         uses: hmarr/auto-approve-action@v3.1.0
 
       # - name: Add automerge label
@@ -70,35 +70,37 @@ jobs:
       #       automerge
 
       - name: Auto Merge
-        if: ${{ env.IS_PLUGIN_ONLY }} == 'true'
+        if: env.IS_PLUGIN_ONLY == 'true'
         uses: plm9606/automerge_actions@1.2.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  # posttojenkins:
-  #   name: POST job request to Jenkins
-  #   runs-on: ubuntu-latest
-  #   needs: checkchanges
-  #   env:
-  #     PLUGIN_INFO: needs.checkchanges.outputs.PLUGIN_INFO
-  #     JENKINS_URL: "braintree.mit.edu:8080"
-  #     USER: "kvg0"
-  #     JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
-  #     JOB_PATH: "dev_run_benchmarks"
-  #   steps:
-  #     - name: Set env vars with plugin info
-  #       run: |
-  #           echo "RUN_SCORE=$(jq -r ".run_score" <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-  #           echo "MODELS=$(jq -r ".models" <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-  #           echo "BENCHMARKS=$(jq -r ".benchmarks" <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-  #     - name: Set job params from env variables
-  #       run: |
-  #         echo "JOB_PARAMS=${{ env.BENCHMARKS }}" >> $GITHUB_ENV
-  #     - name: Build URLs
-  #       if: env.RUN_SCORE == 'true'
-  #       run: |
-  #         echo "CRUMB_URL=$JENKINS_URL/crumbIssuer/api/json --user $USER:${{ secrets.JENKINS_TOKEN }}" >> $GITHUB_ENV
-  #         echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
-  #     - name: POST job
-  #       if: env.RUN_SCORE == 'true'
-  #       run: curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
+  posttojenkins:
+    name: POST job request to Jenkins
+    runs-on: ubuntu-latest
+    needs: checkchanges
+    env:
+      PLUGIN_INFO: ${{ needs.checkchanges.outputs.PLUGIN_INFO }}
+      JENKINS_URL: "braintree.mit.edu:8080"
+      USER: "kvg0"
+      JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
+      JOB_PATH: "dev_run_benchmarks"
+    steps:
+      - name: Set env vars (1)
+        run: |
+            echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+            echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+            echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+     
+      - name: Set job params from env vars
+        run: |
+          echo "JOB_PARAMS=${{ env.BENCHMARKS }}" >> $GITHUB_ENV
+
+      - name: Set endpoint URL with job params
+        run: |
+          echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?$JOB_PARAMS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
+
+      - name: POST job
+        if: env.RUN_SCORE == 'true'
+        run: |
+          curl -X POST -u ${{ env.USER }}:${{ secrets.JENKINS_TOKEN }} ${{ env.URL }}
