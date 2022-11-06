@@ -76,7 +76,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   posttojenkins:
-    name: POST job request to Jenkins
+    name: Score plugins
     runs-on: ubuntu-latest
     needs: checkchanges
     env:
@@ -89,12 +89,23 @@ jobs:
       - name: Install brain-score core
         run: sudo apt-get install -y brainscore_core@git+https://github.com/brain-score/core.git@main
 
-      # - name: Extract params from PLUGIN_INFO
-      #   run: |
-      #       echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-      #       echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-      #       echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+      - name: Add to PLUGIN_INFO
+        run: |
+            echo "PLUGIN_INFO=$(<<<$PLUGIN_INFO jq '. + {public: "False"}')" >> $GITHUB_ENV
+            echo "PLUGIN_INFO=$(<<<$PLUGIN_INFO jq '. + {competition: "None"}')" >> $GITHUB_ENV
+            echo "PLUGIN_INFO=$(<<<$PLUGIN_INFO jq '. + {model_type: "artificialsubject"}')" >> $GITHUB_ENV
 
+      - name: Extract params from PLUGIN_INFO
+        run: |
+            echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+            echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+            echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+
+      - name: Parse changed files with python script
+        id: getpluginfo
+        run: |
+          echo "PLUGIN_INFO=$(python .github/workflows/entrypoints.py process_github_submission '${{ env.PLUGIN_INFO }}')" >> $GITHUB_OUTPUT
+     
       # - name: Set endpoint URL
       #   run: |
       #     echo "URL=$JENKINS_URL/job/$JOB_PATH/buildWithParameters?models=$MODELSbenchmarks=$BENCHMARKS&token=$JENKINS_TOKEN" >> $GITHUB_ENV
