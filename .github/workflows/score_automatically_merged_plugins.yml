@@ -29,6 +29,8 @@ jobs:
     if: contains( github.event.pull_request.labels.*.name, 'automerge')
     outputs:
       PLUGIN_INFO: ${{ steps.getpluginfo.outputs.PLUGIN_INFO }}
+      IS_PLUGIN_ONLY: ${{ steps.ispluginonly.outputs.IS_PLUGIN_ONLY }}
+      RUN_SCORE: ${{ steps.runscore.outputs.RUN_SCORE }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -48,6 +50,16 @@ jobs:
         id: getpluginfo
         run: |
           echo "PLUGIN_INFO=$(python .github/workflows/parse_changed_files.py '${{ env.CHANGED_FILES }}')" >> $GITHUB_OUTPUT
+
+      - name: check if plugin-only
+        id: ispluginonly
+        run: |
+          echo "IS_PLUGIN_ONLY=$(jq -r '.is_plugin_only' <<< "$PLUGIN_INFO")" >> $GITHUB_OUTPUT
+
+      - name: check if scoring needed
+        id: runscore
+        run: |
+          echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGIN_INFO")" >> $GITHUB_OUTPUT
      
   automerge:
     name: If plugin-only, approve and merge
@@ -55,12 +67,9 @@ jobs:
     needs: checkchanges
     env:
       PLUGIN_INFO: ${{ needs.checkchanges.outputs.PLUGIN_INFO }}
+    if: env.IS_PLUGIN_ONLY == 'true'
     steps:
-      - name: check if plugin-only
-        run: |
-          echo "IS_PLUGIN_ONLY=$(jq -r '.is_plugin_only' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
       - name: Auto Approve
-        if: env.IS_PLUGIN_ONLY == 'true'
         uses: hmarr/auto-approve-action@v3.1.0
 
       # - name: Add automerge label
@@ -70,7 +79,6 @@ jobs:
       #       automerge
 
       - name: Auto Merge
-        if: env.IS_PLUGIN_ONLY == 'true'
         uses: plm9606/automerge_actions@1.2.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -80,28 +88,30 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkchanges
     env:
+      RUN_SCORE: ${{ needs.checkchanges.outputs.RUN_SCORE }}
       PLUGIN_INFO: ${{ needs.checkchanges.outputs.PLUGIN_INFO }}
       JENKINS_URL: "braintree.mit.edu:8080"
       USER: "kvg0"
       JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
       JOB_PATH: "dev_run_benchmarks"
+    if: env.RUN_SCORE == 'true'
     steps:
       - name: Add public, competition, and model_type to PLUGIN_INFO
         run: |
             echo "PLUGIN_INFO="$(<<<$PLUGIN_INFO jq '. + {public: "false", competition: "None", model_type: "artificialsubject"}')"" >> $GITHUB_ENV
 
-      - name: Extract params from PLUGIN_INFO
-        run: |
-            echo "RUN_SCORE=$(jq -r '.run_score' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-            echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-            echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+      # - name: Extract models and benchmarks from PLUGIN_INFO
+      #   run: |
+      #       echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+      #       echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+
+      - name: Check out repository code
+        uses: actions/checkout@v2
 
       - name: Install brain-score core
-        if: env.RUN_SCORE == 'true'
         run: python -m pip install brainscore_core@git+https://github.com/brain-score/core.git@main
 
       - name: Call entrypoints
-        if: env.RUN_SCORE == 'true'
         run: |
           pwd
           python .github/workflows/entrypoints.py process_github_submission '${{ env.PLUGIN_INFO }}'
