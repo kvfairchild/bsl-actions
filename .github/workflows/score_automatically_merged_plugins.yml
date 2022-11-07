@@ -66,7 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkchanges
     env:
-      PLUGIN_INFO: ${{ needs.checkchanges.outputs.PLUGIN_INFO }}
+      IS_PLUGIN_ONLY: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
     if: env.IS_PLUGIN_ONLY == 'true'
     steps:
       - name: Auto Approve
