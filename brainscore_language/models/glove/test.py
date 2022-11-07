@@ -18,4 +18,4 @@ def test_neural():
     np.testing.assert_array_equal(representations['stimulus'], text)
     assert len(representations['neuroid']) == expected_feature_size
 
-# INVOKE SCORE
+# INVOKE SCORING RUN
