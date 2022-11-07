@@ -65,8 +65,11 @@ jobs:
     name: If plugin-only, approve and merge
     runs-on: ubuntu-latest
     needs: checkchanges
-    if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }} == 'true'
+    if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }} == "true"
     steps:
+      - name: sanity check
+        run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
+
       - name: Auto Approve
         uses: hmarr/auto-approve-action@v3.1.0
 
@@ -91,26 +94,21 @@ jobs:
       USER: "kvg0"
       JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
       JOB_PATH: "dev_run_benchmarks"
-    if: ${{ needs.checkchanges.outputs.RUN_SCORE }} == 'true'
+    if: ${{ needs.checkchanges.outputs.RUN_SCORE }} == "true"
     steps:
       - name: Add public, competition, and model_type to PLUGIN_INFO
         run: |
-            echo "PLUGIN_INFO="$(<<<$PLUGIN_INFO jq '. + {public: "false", competition: "None", model_type: "artificialsubject"}')"" >> $GITHUB_ENV
+          echo "PLUGIN_INFO="$(<<<$PLUGIN_INFO jq '. + {public: "false", competition: "None", model_type: "artificialsubject"}')"" >> $GITHUB_ENV
 
-      # - name: Extract models and benchmarks from PLUGIN_INFO
-      #   run: |
-      #       echo "MODELS=$(jq -r '.models' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
-      #       echo "BENCHMARKS=$(jq -r '.benchmarks' <<< "$PLUGIN_INFO")" >> $GITHUB_ENV
+      - name: Install brain-score core
+        run: |
+          python -m pip install brainscore_core@git+https://github.com/brain-score/core.git@main
 
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: Install brain-score core
-        run: python -m pip install brainscore_core@git+https://github.com/brain-score/core.git@main
-
       - name: Call entrypoints
         run: |
-          pwd
           python .github/workflows/entrypoints.py process_github_submission '${{ env.PLUGIN_INFO }}'
      
 
