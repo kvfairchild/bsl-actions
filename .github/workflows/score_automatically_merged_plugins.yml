@@ -49,7 +49,8 @@ jobs:
       - name: Parse changed files with python script
         id: getpluginfo
         run: |
-          echo "PLUGIN_INFO=$(python .github/workflows/parse_changed_files.py '${{ env.CHANGED_FILES }}')" >> $GITHUB_OUTPUT
+          echo "PLUGIN_INFO=$(python .github/workflows/parse_changed_files.py '${{ env.CHANGED_FILES }}')" >> $GITHUB_ENV
+          echo "PLUGIN_INFO=$PLUGIN_INFO" >> $GITHUB_OUTPUT
 
       - name: check if plugin-only
         id: ispluginonly
@@ -65,7 +66,7 @@ jobs:
     name: If plugin-only, approve and merge
     runs-on: ubuntu-latest
     needs: checkchanges
-    if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }} == "true"
+    if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }} == 'true'
     steps:
       - name: sanity check
         run: echo "${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}"
@@ -94,7 +95,7 @@ jobs:
       USER: "kvg0"
       JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
       JOB_PATH: "dev_run_benchmarks"
-    if: ${{ needs.checkchanges.outputs.RUN_SCORE }} == "true"
+    if: ${{ needs.checkchanges.outputs.RUN_SCORE }} == 'true'
     steps:
       - name: Add public, competition, and model_type to PLUGIN_INFO
         run: |
