@@ -17,3 +17,5 @@ def test_neural():
     assert len(representations['presentation']) == 4
     np.testing.assert_array_equal(representations['stimulus'], text)
     assert len(representations['neuroid']) == expected_feature_size
+
+# INVOKE SCORE
