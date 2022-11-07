@@ -65,9 +65,7 @@ jobs:
     name: If plugin-only, approve and merge
     runs-on: ubuntu-latest
     needs: checkchanges
-    env:
-      IS_PLUGIN_ONLY: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }}
-    if: env.IS_PLUGIN_ONLY == 'true'
+    if: ${{ needs.checkchanges.outputs.IS_PLUGIN_ONLY }} == 'true'
     steps:
       - name: Auto Approve
         uses: hmarr/auto-approve-action@v3.1.0
@@ -88,13 +86,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkchanges
     env:
-      RUN_SCORE: ${{ needs.checkchanges.outputs.RUN_SCORE }}
       PLUGIN_INFO: ${{ needs.checkchanges.outputs.PLUGIN_INFO }}
       JENKINS_URL: "braintree.mit.edu:8080"
       USER: "kvg0"
       JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
       JOB_PATH: "dev_run_benchmarks"
-    if: env.RUN_SCORE == 'true'
+    if: ${{ needs.checkchanges.outputs.RUN_SCORE }} == 'true'
     steps:
       - name: Add public, competition, and model_type to PLUGIN_INFO
         run: |
