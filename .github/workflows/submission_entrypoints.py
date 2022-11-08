@@ -27,7 +27,7 @@ def process_github_submission(plugin_info: Dict[str, Union[List[str], str]]):
 	for model in models:
 		for benchmark in benchmarks:
 			url = f'{JENKINS_BASE}/job/{JOB_PATH}/buildWithParameters?models={model}benchmarks={benchmark}&token={JENKINS_TOKEN}'
-			response = subprocess.run(f"curl -X POST -u {USER}:{JENKINS_TOKEN} {url}")
+			response = subprocess.run(f"curl -X POST -u {USER}:{JENKINS_TOKEN} {url}", shell=True)
 
 
 if __name__ == '__main__':
