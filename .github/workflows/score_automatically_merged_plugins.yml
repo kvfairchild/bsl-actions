@@ -104,7 +104,7 @@ jobs:
 
       - name: Build project
         run: |
-          python -m pip install -e "."
+          python -m pip install "."
 
       - name: Call entrypoints
         run: |
