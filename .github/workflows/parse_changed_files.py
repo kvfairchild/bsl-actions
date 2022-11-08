@@ -27,22 +27,25 @@ def get_changed_files() -> List[str]:
 def is_plugin_only(plugins_dict, non_plugin_files_changed):
 
 	if len(non_plugin_files_changed) > 0:
-		plugins_dict["is_plugin_only"] = "false"
+		plugins_dict["is_plugin_only"] = "False"
 	else:
-		plugins_dict["is_plugin_only"] = "true"
+		plugins_dict["is_plugin_only"] = "True"
 
 	return plugins_dict
 
 
-def _get_registered_plugins(plugin_type: str, plugin_dirs: List[str]) -> List[str]:
+def _get_registered_plugins(plugin_type: str, plugin_dirs: List[str], run_all: bool) -> List[str]:
 	""" 
 	Searches all `plugin_type` __init.py__ files for registered plugins.
 	Returns list of identifiers for each registered plugin. 
 	"""
 	registered_plugins = []
 
+	plugin_type_dir = Path(f'brainscore_language/{plugin_type}')
+	plugin_dirs = [d.name for d in plugin_type_dir.iterdir() if d.is_dir()] if run_all else plugin_dirs
+
 	for plugin_dirname in plugin_dirs:
-		plugin_dirpath = Path(f'brainscore_language/{plugin_type}/{plugin_dirname}')
+		plugin_dirpath = plugin_type_dir / plugin_dirname
 		init_file = plugin_dirpath / "__init__.py"
 		with open(init_file) as f:
 			registry_name = plugin_type.strip(
@@ -59,16 +62,17 @@ def _get_registered_plugins(plugin_type: str, plugin_dirs: List[str]) -> List[st
 
 def plugins_to_score(plugins_dict, plugin_files_changed) -> str:
 
-	plugins_dict["run_score"] = "false"
+	plugins_dict["run_score"] = "False"
 
 	scoring_plugins = ("models", "benchmarks")
 	scoring_plugin_paths = tuple([f'brainscore_language/{plugin_type}/' for plugin_type in scoring_plugins])
 	model_and_benchmark_files = [fname for fname in plugin_files_changed if fname.startswith(scoring_plugin_paths)]
 	if len(model_and_benchmark_files) > 0:
-		plugins_dict["run_score"] = "true"
+		plugins_dict["run_score"] = "True"
 		for plugin_type in scoring_plugins:
 			plugin_dirs = set([fname.split('/')[2] for fname in model_and_benchmark_files if f'/{plugin_type}/' in fname])
-			plugins_to_score = _get_registered_plugins(plugin_type, plugin_dirs)
+			run_all = True if len(plugin_dirs) == 0 else False 
+			plugins_to_score = _get_registered_plugins(plugin_type, plugin_dirs, run_all)
 			plugins_dict[plugin_type] = ' '.join(plugins_to_score)
 
 	plugins_dict = str(plugins_dict).replace('\'', '\"')
