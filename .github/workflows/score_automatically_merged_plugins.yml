@@ -111,4 +111,4 @@ jobs:
 
       - name: Call entrypoints
         run: |
-          python .github/workflows/submission_entrypoints.py process_github_submission '${{ env.PLUGIN_INFO }}'
+          echo "$(python .github/workflows/submission_entrypoints.py process_github_submission '${{ env.PLUGIN_INFO }}')"
