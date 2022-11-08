@@ -27,9 +27,9 @@ def get_changed_files() -> List[str]:
 def is_plugin_only(plugins_dict, non_plugin_files_changed):
 
 	if len(non_plugin_files_changed) > 0:
-		plugins_dict["is_plugin_only"] = "false"
+		plugins_dict["is_plugin_only"] = "False"
 	else:
-		plugins_dict["is_plugin_only"] = "true"
+		plugins_dict["is_plugin_only"] = "True"
 
 	return plugins_dict
 
