@@ -1,4 +1,4 @@
-import ast
+# import ast
 import sys
 
 ###
@@ -29,5 +29,5 @@ def process_github_submission(plugin_info: Dict[str, Union[List[str], str]]):
 
 if __name__ == '__main__':
     function = getattr(sys.modules[__name__], sys.argv[1])
-    args_dict = ast.literal_eval(sys.argv[2])
-    function(args_dict)
+    # args_dict = ast.literal_eval(sys.argv[2])
+    function(sys.argv[2])

@@ -108,4 +108,4 @@ jobs:
 
       - name: Call entrypoints
         run: |
-          python .github/workflows/entrypoints.py process_github_submission '${{ env.PLUGIN_INFO }}'
+          python .github/workflows/submission_entrypoints.py process_github_submission ${{ env.PLUGIN_INFO }}
