@@ -9,10 +9,10 @@ from typing import Dict, Union, List
 
 # from brainscore_core.submission.endpoints import process_github_submission
 
-JENKINS_BASE: "braintree.mit.edu:8080"
-USER: os.environ['JENKINS_USR']
+JENKINS_BASE = "braintree.mit.edu:8080"
+USER = os.environ['JENKINS_USR']
 JENKINS_TOKEN = os.environ['JENKINS_TOKEN']
-JOB_PATH: "dev_run_benchmarks"
+JOB_PATH = "dev_run_benchmarks"
 
 def process_github_submission(plugin_info: Dict[str, Union[List[str], str]]):
 	"""
